@@ -1,0 +1,15 @@
+
+/data
+
+# For the terrain type detection
+/terrain-type-detection/land-polygons-split*
+/terrain-type-detection/tiles
+/terrain-type-detection/testOsm*
+
+# For all folders
+*.o
+*.exe
+*.dll
+*.so
+*.dylib
+*.a
