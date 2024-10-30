@@ -3,10 +3,10 @@
 TerrainChecker::TerrainChecker() {
     tileSizeX = 3;
     tileSizeY = 3;
-    tilesCountX = 121;
-    tilesCountY = 61;
-    shiftX = 180;
-    shiftY = 90;
+    tilesCountX = 61;
+    tilesCountY = 121;
+    shiftX = 90;
+    shiftY = 180;
 }
 
 std::pair<int, int> TerrainChecker::getTileForPoint(GeoPoint point) const {
@@ -24,8 +24,10 @@ void TerrainChecker::readTile(int x, int y)  {
     std::string filename = getTileFileName(x, y);
     std::ifstream inFile(filename, std::ios::binary);
     if (!inFile) {
-        std::cerr << "Error opening tile file for reading!. filename: " << filename << std::endl;
+        terrainMap[std::make_tuple(x, y)] = std::vector<TerrainPolygon>();
+        return;
     }
+    
 
     int polygonsCount;
     inFile.read(reinterpret_cast<char*>(&polygonsCount), sizeof(polygonsCount));  // Odczyt liczby wierzchołków
@@ -64,10 +66,11 @@ std::vector<TerrainPolygon> TerrainChecker::getPolygonsForPoint(GeoPoint point){
 }
 bool TerrainChecker::isOnLand(GeoPoint point){
     std::vector<TerrainPolygon> polygons = getPolygonsForPoint(point);
+    // std::cout<<"Point mapped to tile: "<<this->getTileForPoint(point).first<<" "<<this->getTileForPoint(point).second<<std::endl;
     // std::cout<<"Checking if point is on land: "<<point.getLat() + shiftX<<" "<<point.getLon() + shiftY<<std::endl;
     for (auto polygon : polygons) {
-        // std::cout<<polygon.toString()<<std::endl;
         if (polygon.isInside(point.getLat() + shiftX, point.getLon() + shiftY)) {
+            // std::cout<<polygon.toString()<<std::endl;
             return true;
         }
     }

@@ -61,7 +61,7 @@ bool TerrainPolygon::isInside(GeoPoint point) const {
 std::string TerrainPolygon::toString() const {
     std::string result = "Polygon[";
     for (auto point : points) {
-        result += "(" + std::to_string(point.getLat()) + ", " + std::to_string(point.getLon()) + ") ";
+        result += "(" + std::to_string(point.getLat()) + ", " + std::to_string(point.getLon()) + "), ";
     }
     result += "]";
     return result;

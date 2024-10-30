@@ -20,7 +20,7 @@ class PolygonMap:
         self.gdf = gdf
         self.tileSizeX = tileSizeX
         self.tileSizeY = tileSizeY
-        self.bounds = [-180, -90, 180, 90]
+        self.bounds = [-90, -180, 90, 180]
 
         # Przesunięcie współrzędnych, aby nie było wartości ujemnych
         self.minx, self.miny, self.maxx, self.maxy = self.bounds
@@ -94,15 +94,21 @@ def saveTile(polMap, i, j):
             for coord in polygon.exterior.coords:
                 f.write(struct.pack('dd', coord[0], coord[1]))
                 
+def swap_lon_lat(geometry):
+    if geometry.geom_type == 'Polygon':
+        return Polygon([(y, x) for x, y in geometry.exterior.coords])
+    return geometry
 
 if __name__ == '__main__':
     # Wczytaj plik Shapefile
     shapefile_path = DATA_PATH
     print(f'Loading shapefile from {shapefile_path}')
     gdf = gpd.read_file(shapefile_path)
+    print("Swapping lon and lat")
+    gdf['geometry'] = gdf['geometry'].apply(swap_lon_lat)
 
     minPolygonArea = MIN_POLYGON_AREA
-    print(f'Reducing polygons with area less than {minPolygonArea}')
+    print(f'Reducing polygons with area less than {minPolygonArea} surface units')
     gdfReduced = gdf[gdf['geometry'].apply(lambda x: polygonArea(x.exterior.coords) > minPolygonArea)]
     print(f'Number of polygons before reduction: {len(gdf)}')
     print(f'Number of polygons after reduction: {len(gdfReduced)}')
