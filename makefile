@@ -6,7 +6,7 @@ COMPILER = g++
 TT_FOLDER = terrain-type-detection
 
 # Object files for TCtester
-TC_OBJECTS = common.o $(TT_FOLDER)/terrainChecker.o $(TT_FOLDER)/TCtester.o
+TC_OBJECTS = common.o $(TT_FOLDER)/terrainChecker.o $(TT_FOLDER)/TCtester.o $(TT_FOLDER)/terrainPolygon.o
 
 # TCtester executable
 TCtester: $(TC_OBJECTS)
@@ -22,7 +22,14 @@ $(TT_FOLDER)/terrainChecker.o: $(TT_FOLDER)/terrainChecker.cpp
 $(TT_FOLDER)/TCtester.o: $(TT_FOLDER)/TCtester.cpp
 	$(COMPILER) $(CPPFLAGS) -c $< -o $@
 
+$(TT_FOLDER)/terrainPolygon.o: $(TT_FOLDER)/terrainPolygon.cpp
+	$(COMPILER) $(CPPFLAGS) -c $< -o $@
+
 # Clean rule
 .PHONY: clean
 clean:
-	rm -f $(TC_OBJECTS) TCtester
+ifeq ($(OS), Windows_NT)
+	del /Q *.o $(TT_FOLDER)\*.o TCtester.exe
+else
+	rm -f *.o $(TT_FOLDER)/*.o TCtester
+endif
